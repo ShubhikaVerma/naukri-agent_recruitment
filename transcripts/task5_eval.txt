@@ -1,0 +1,68 @@
+﻿
+Top-k = 3 chunks per query; scoring at document level after dedup
+
+==============================================================================
+kb_fixed
+==============================================================================
+System.Management.Automation.RemoteException
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+Loading weights:  63%|######3   | 65/103 [00:00<00:00, 634.59it/s]
+Loading weights: 100%|##########| 103/103 [00:00<00:00, 986.25it/s]
+Q1: Who is eligible for a referral bonus and when is it paid?
+    relevant : ['referral_bonus']
+    retrieved: ['referral_bonus']
+    precision: 1/1 = 1.000   recall: 1/1 = 1.000
+Q2: How many days do I have to submit documents for background verification?
+    relevant : ['background_verification']
+    retrieved: ['background_verification', 'interview_scheduling']
+    precision: 1/2 = 0.500   recall: 1/1 = 1.000
+Q3: Can I work remotely during my probation?
+    relevant : ['remote_work_eligibility', 'probation_period']
+    retrieved: ['remote_work_eligibility', 'probation_period']
+    precision: 2/2 = 1.000   recall: 2/2 = 1.000
+Q4: How long is my data kept if I am not hired?
+    relevant : ['applicant_data_retention']
+    retrieved: ['applicant_data_retention']
+    precision: 1/1 = 1.000   recall: 1/1 = 1.000
+Q5: What is the standard notice period when I join?
+    relevant : ['notice_period']
+    retrieved: ['notice_period']
+    precision: 1/1 = 1.000   recall: 1/1 = 1.000
+
+  MEAN precision = (1.000 + 0.500 + 1.000 + 1.000 + 1.000) / 5 = 0.900
+  MEAN recall    = (1.000 + 1.000 + 1.000 + 1.000 + 1.000) / 5 = 1.000
+
+==============================================================================
+kb_sentence
+==============================================================================
+Q1: Who is eligible for a referral bonus and when is it paid?
+    relevant : ['referral_bonus']
+    retrieved: ['referral_bonus']
+    precision: 1/1 = 1.000   recall: 1/1 = 1.000
+Q2: How many days do I have to submit documents for background verification?
+    relevant : ['background_verification']
+    retrieved: ['background_verification', 'applicant_data_retention']
+    precision: 1/2 = 0.500   recall: 1/1 = 1.000
+Q3: Can I work remotely during my probation?
+    relevant : ['remote_work_eligibility', 'probation_period']
+    retrieved: ['remote_work_eligibility', 'probation_period']
+    precision: 2/2 = 1.000   recall: 2/2 = 1.000
+Q4: How long is my data kept if I am not hired?
+    relevant : ['applicant_data_retention']
+    retrieved: ['applicant_data_retention']
+    precision: 1/1 = 1.000   recall: 1/1 = 1.000
+Q5: What is the standard notice period when I join?
+    relevant : ['notice_period']
+    retrieved: ['notice_period', 'probation_period']
+    precision: 1/2 = 0.500   recall: 1/1 = 1.000
+
+  MEAN precision = (1.000 + 0.500 + 1.000 + 1.000 + 0.500) / 5 = 0.800
+  MEAN recall    = (1.000 + 1.000 + 1.000 + 1.000 + 1.000) / 5 = 1.000
+
+Saved to eval_chunking.json
+
+SUMMARY (k = 3)
+  kb_fixed     precision=0.900  recall=1.000
+  kb_sentence  precision=0.800  recall=1.000
+
+

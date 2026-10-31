@@ -1,0 +1,3 @@
+# Offer Negotiation Policy
+
+Recruiters may negotiate the offered salary within a band of ten percent above the approved budget for the role. Any request beyond that band must be approved in writing by the hiring manager and the HR head. Negotiation must be completed within seven days of the offer being released, after which the offer lapses. All revised offers are issued as a new offer letter and the earlier version is withdrawn.

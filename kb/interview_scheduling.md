@@ -1,0 +1,3 @@
+# Interview Scheduling Process
+
+Once a recruiter moves an application to the Interview Scheduled stage, the candidate receives up to three proposed time slots by email and in the app. The candidate has 48 hours to confirm a slot, after which the proposal expires and the recruiter is notified. Either party may reschedule once without penalty if they give at least 24 hours of notice. A second reschedule request must be approved by the recruiter.

@@ -1,0 +1,34 @@
+﻿
+System.Management.Automation.RemoteException
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 103/103 [00:00<00:00, 1304.27it/s]
+
+=== kb_fixed ===
+In-scope top-1 similarity:
+  0.736  Can a recruiter negotiate my salary above the approved budget?
+  0.493  Who can see the results of my background check?
+  0.582  When can an employee apply to move to a different team internally?
+  0.652  Do exit interviews affect my final settlement?
+Out-of-scope top-1 similarity:
+  0.122  What is the weather forecast for Bengaluru this weekend?
+  0.028  How do I bake a chocolate cake?
+  0.246  Which company pays software engineers the most?
+Lowest in-scope = 0.493 | Highest out-of-scope = 0.246
+Chosen threshold (midpoint of the gap): 0.369
+
+=== kb_sentence ===
+In-scope top-1 similarity:
+  0.728  Can a recruiter negotiate my salary above the approved budget?
+  0.499  Who can see the results of my background check?
+  0.594  When can an employee apply to move to a different team internally?
+  0.777  Do exit interviews affect my final settlement?
+Out-of-scope top-1 similarity:
+  0.174  What is the weather forecast for Bengaluru this weekend?
+  0.066  How do I bake a chocolate cake?
+  0.268  Which company pays software engineers the most?
+Lowest in-scope = 0.499 | Highest out-of-scope = 0.268
+Chosen threshold (midpoint of the gap): 0.384
+
+Saved to calibration.json
+
+

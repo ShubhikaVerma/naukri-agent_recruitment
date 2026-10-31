@@ -1,0 +1,3 @@
+# Notice Period Policy
+
+The standard notice period for employees is sixty days, and it is stated in the offer letter. Candidates serving notice at their current employer may request a buyout, which is handled between the candidate and that employer. A new employer may agree to a shorter joining date only with written confirmation of the release date from the previous employer. During the notice period the employee remains bound by their current contract.

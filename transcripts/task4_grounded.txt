@@ -1,0 +1,83 @@
+﻿
+
+################ kb_fixed ################
+
+Q: Who is eligible for a referral bonus and when is it paid?
+System.Management.Automation.RemoteException
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+Loading weights:  42%|####1     | 43/103 [00:00<00:00, 415.60it/s]
+Loading weights: 100%|##########| 103/103 [00:00<00:00, 985.90it/s]
+  [ANSWERED] top1=0.803 (threshold 0.369)
+  Answer : Employees who refer a candidate that is hired are eligible for a referral bonus after the new 
+hire completes ninety days of service. The bonus amount depends on the seniority of the role and is 
+announced when the referral is submitted.
+  Sources: referral_bonus
+
+Q: How many days do I have to submit documents for background verification?
+  [ANSWERED] top1=0.756 (threshold 0.369)
+  Answer : Background verification starts only after a candidate has accepted an offer in writing. The 
+candidate must submit the requested documents within five working days of the request.
+  Sources: background_verification
+
+Q: Can I work remotely during my probation?
+  [ANSWERED] top1=0.723 (threshold 0.369)
+  Answer : Employees are eligible for hybrid or fully remote work only after completing probation. 
+Probation may be extended once by up to three months if performance goals are not met.
+  Sources: probation_period, remote_work_eligibility
+
+Q: How long is my data kept if I am not hired?
+  [ANSWERED] top1=0.686 (threshold 0.369)
+  Answer : Applicant data for candidates who are not hired is retained for twelve months from the date of 
+the last application activity. Candidates can request deletion of their data at any time and the request 
+is completed within thirty days.
+  Sources: applicant_data_retention
+
+Q: What is the standard notice period when I join?
+  [ANSWERED] top1=0.645 (threshold 0.369)
+  Answer : The standard notice period for employees is sixty days, and it is stated in the offer letter. 
+During the notice period the employee remains bound by their current contract.
+  Sources: notice_period
+
+Q: What is the capital of France?
+  [FALLBACK] top1=-0.020 (threshold 0.369)
+  Answer : I don't know based on the available policy documents.
+
+################ kb_sentence ################
+
+Q: Who is eligible for a referral bonus and when is it paid?
+  [ANSWERED] top1=0.801 (threshold 0.384)
+  Answer : Employees who refer a candidate that is hired are eligible for a referral bonus after the new 
+hire completes ninety days of service. The bonus amount depends on the seniority of the role and is 
+announced when the referral is submitted.
+  Sources: referral_bonus
+
+Q: How many days do I have to submit documents for background verification?
+  [ANSWERED] top1=0.651 (threshold 0.384)
+  Answer : Background verification starts only after a candidate has accepted an offer in writing. The 
+candidate must submit the requested documents within five working days of the request.
+  Sources: background_verification
+
+Q: Can I work remotely during my probation?
+  [ANSWERED] top1=0.711 (threshold 0.384)
+  Answer : Employees are eligible for hybrid or fully remote work only after completing probation. 
+Probation may be extended once by up to three months if performance goals are not met.
+  Sources: probation_period, remote_work_eligibility
+
+Q: How long is my data kept if I am not hired?
+  [ANSWERED] top1=0.684 (threshold 0.384)
+  Answer : Applicant data for candidates who are not hired is retained for twelve months from the date of 
+the last application activity. Candidates can request deletion of their data at any time and the request 
+is completed within thirty days.
+  Sources: applicant_data_retention
+
+Q: What is the standard notice period when I join?
+  [ANSWERED] top1=0.704 (threshold 0.384)
+  Answer : The standard notice period for employees is sixty days, and it is stated in the offer letter. 
+During the notice period the employee remains bound by their current contract.
+  Sources: notice_period
+
+Q: What is the capital of France?
+  [FALLBACK] top1=0.035 (threshold 0.384)
+  Answer : I don't know based on the available policy documents.
+
+

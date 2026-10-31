@@ -1,0 +1,30 @@
+{
+  "kb_fixed": {
+    "threshold": 0.369,
+    "in_scope": {
+      "Can a recruiter negotiate my salary above the approved budget?": 0.7362,
+      "Who can see the results of my background check?": 0.4931,
+      "When can an employee apply to move to a different team internally?": 0.5824,
+      "Do exit interviews affect my final settlement?": 0.652
+    },
+    "out_of_scope": {
+      "What is the weather forecast for Bengaluru this weekend?": 0.1225,
+      "How do I bake a chocolate cake?": 0.0281,
+      "Which company pays software engineers the most?": 0.2459
+    }
+  },
+  "kb_sentence": {
+    "threshold": 0.384,
+    "in_scope": {
+      "Can a recruiter negotiate my salary above the approved budget?": 0.7281,
+      "Who can see the results of my background check?": 0.4991,
+      "When can an employee apply to move to a different team internally?": 0.5941,
+      "Do exit interviews affect my final settlement?": 0.7775
+    },
+    "out_of_scope": {
+      "What is the weather forecast for Bengaluru this weekend?": 0.1745,
+      "How do I bake a chocolate cake?": 0.0664,
+      "Which company pays software engineers the most?": 0.268
+    }
+  }
+}

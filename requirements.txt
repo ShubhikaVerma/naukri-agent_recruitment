@@ -1,0 +1,12 @@
+sentence-transformers
+chromadb
+crewai
+langchain-core
+pydantic
+fastapi
+uvicorn
+websockets
+httpx
+autogen-agentchat
+autogen-core
+autogen-ext

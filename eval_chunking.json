@@ -1,0 +1,183 @@
+{
+  "kb_fixed": {
+    "rows": [
+      {
+        "retrieved": [
+          "referral_bonus"
+        ],
+        "relevant": [
+          "referral_bonus"
+        ],
+        "hits": [
+          "referral_bonus"
+        ],
+        "precision": 1.0,
+        "recall": 1.0,
+        "p_text": "1/1 = 1.000",
+        "r_text": "1/1 = 1.000",
+        "query": "Who is eligible for a referral bonus and when is it paid?"
+      },
+      {
+        "retrieved": [
+          "background_verification",
+          "interview_scheduling"
+        ],
+        "relevant": [
+          "background_verification"
+        ],
+        "hits": [
+          "background_verification"
+        ],
+        "precision": 0.5,
+        "recall": 1.0,
+        "p_text": "1/2 = 0.500",
+        "r_text": "1/1 = 1.000",
+        "query": "How many days do I have to submit documents for background verification?"
+      },
+      {
+        "retrieved": [
+          "remote_work_eligibility",
+          "probation_period"
+        ],
+        "relevant": [
+          "remote_work_eligibility",
+          "probation_period"
+        ],
+        "hits": [
+          "remote_work_eligibility",
+          "probation_period"
+        ],
+        "precision": 1.0,
+        "recall": 1.0,
+        "p_text": "2/2 = 1.000",
+        "r_text": "2/2 = 1.000",
+        "query": "Can I work remotely during my probation?"
+      },
+      {
+        "retrieved": [
+          "applicant_data_retention"
+        ],
+        "relevant": [
+          "applicant_data_retention"
+        ],
+        "hits": [
+          "applicant_data_retention"
+        ],
+        "precision": 1.0,
+        "recall": 1.0,
+        "p_text": "1/1 = 1.000",
+        "r_text": "1/1 = 1.000",
+        "query": "How long is my data kept if I am not hired?"
+      },
+      {
+        "retrieved": [
+          "notice_period"
+        ],
+        "relevant": [
+          "notice_period"
+        ],
+        "hits": [
+          "notice_period"
+        ],
+        "precision": 1.0,
+        "recall": 1.0,
+        "p_text": "1/1 = 1.000",
+        "r_text": "1/1 = 1.000",
+        "query": "What is the standard notice period when I join?"
+      }
+    ],
+    "mean_precision": 0.9,
+    "mean_recall": 1.0
+  },
+  "kb_sentence": {
+    "rows": [
+      {
+        "retrieved": [
+          "referral_bonus"
+        ],
+        "relevant": [
+          "referral_bonus"
+        ],
+        "hits": [
+          "referral_bonus"
+        ],
+        "precision": 1.0,
+        "recall": 1.0,
+        "p_text": "1/1 = 1.000",
+        "r_text": "1/1 = 1.000",
+        "query": "Who is eligible for a referral bonus and when is it paid?"
+      },
+      {
+        "retrieved": [
+          "background_verification",
+          "applicant_data_retention"
+        ],
+        "relevant": [
+          "background_verification"
+        ],
+        "hits": [
+          "background_verification"
+        ],
+        "precision": 0.5,
+        "recall": 1.0,
+        "p_text": "1/2 = 0.500",
+        "r_text": "1/1 = 1.000",
+        "query": "How many days do I have to submit documents for background verification?"
+      },
+      {
+        "retrieved": [
+          "remote_work_eligibility",
+          "probation_period"
+        ],
+        "relevant": [
+          "remote_work_eligibility",
+          "probation_period"
+        ],
+        "hits": [
+          "remote_work_eligibility",
+          "probation_period"
+        ],
+        "precision": 1.0,
+        "recall": 1.0,
+        "p_text": "2/2 = 1.000",
+        "r_text": "2/2 = 1.000",
+        "query": "Can I work remotely during my probation?"
+      },
+      {
+        "retrieved": [
+          "applicant_data_retention"
+        ],
+        "relevant": [
+          "applicant_data_retention"
+        ],
+        "hits": [
+          "applicant_data_retention"
+        ],
+        "precision": 1.0,
+        "recall": 1.0,
+        "p_text": "1/1 = 1.000",
+        "r_text": "1/1 = 1.000",
+        "query": "How long is my data kept if I am not hired?"
+      },
+      {
+        "retrieved": [
+          "notice_period",
+          "probation_period"
+        ],
+        "relevant": [
+          "notice_period"
+        ],
+        "hits": [
+          "notice_period"
+        ],
+        "precision": 0.5,
+        "recall": 1.0,
+        "p_text": "1/2 = 0.500",
+        "r_text": "1/1 = 1.000",
+        "query": "What is the standard notice period when I join?"
+      }
+    ],
+    "mean_precision": 0.8,
+    "mean_recall": 1.0
+  }
+}

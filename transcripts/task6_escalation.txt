@@ -1,0 +1,21 @@
+﻿
+Formula: score = 0.5 * flagged + 0.5 * (days_since_created / 30)
+days_since_created percentiles: p50=13  p80=22  p90=27
+score percentiles:              p50=0.291  p80=0.477  p90=0.617  max=0.983
+
+Candidate thresholds -> how many of 48 applications would escalate
+  >= 0.50:  8 records (16.7%)
+  >= 0.55:  8 records (16.7%)
+  >= 0.60:  6 records (12.5%)  <-- chosen
+  >= 0.65:  3 records (6.2%)
+  >= 0.70:  3 records (6.2%)
+
+Records recommended for escalation at 0.6:
+  APP-0022  score=0.983  flagged=True  days=29  status=Rejected
+  APP-0017  score=0.817  flagged=True  days=19  status=Offered
+  APP-0002  score=0.717  flagged=True  days=13  status=Screening
+  APP-0013  score=0.633  flagged=True  days=8  status=Offered
+  APP-0023  score=0.617  flagged=True  days=7  status=Rejected
+  APP-0027  score=0.617  flagged=True  days=7  status=Screening
+
+

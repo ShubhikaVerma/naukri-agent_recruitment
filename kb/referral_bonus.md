@@ -1,0 +1,3 @@
+# Referral Bonus Policy
+
+Employees who refer a candidate that is hired are eligible for a referral bonus after the new hire completes ninety days of service. The bonus amount depends on the seniority of the role and is announced when the referral is submitted. A referral counts only if the candidate was not already in the applicant database in the previous six months. HR team members and the hiring manager for the role are not eligible for a bonus on that role.

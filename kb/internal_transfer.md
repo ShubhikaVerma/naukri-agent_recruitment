@@ -1,0 +1,3 @@
+# Internal Transfer Eligibility
+
+An employee becomes eligible to apply for an internal transfer after completing twelve months in their current role. The employee must have a performance rating of meets expectations or higher in the latest review cycle. The employee needs to inform their current manager before applying, and the manager cannot block an eligible transfer without a documented business reason. Employees on a performance improvement plan are not eligible.

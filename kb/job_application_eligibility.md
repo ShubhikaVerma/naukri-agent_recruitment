@@ -1,0 +1,3 @@
+# Job Application Eligibility Criteria
+
+A candidate must hold the minimum educational qualification listed in the job posting and have a verified email address and phone number on the profile. Candidates may apply to a maximum of fifteen roles per day to keep recruiter inboxes manageable. An application is considered eligible only when the resume is uploaded in PDF or DOCX format and the mandatory screening questions are answered. Applications that fail these checks stay in draft and are not shown to the employer.

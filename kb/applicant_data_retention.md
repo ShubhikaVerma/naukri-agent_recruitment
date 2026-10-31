@@ -1,0 +1,3 @@
+# Applicant Data Retention Policy
+
+Applicant data for candidates who are not hired is retained for twelve months from the date of the last application activity. After that period the data is deleted or anonymised unless the candidate has opted in to stay in the talent pool. Candidates can request deletion of their data at any time and the request is completed within thirty days. Data of hired candidates moves to the employee record and follows the employee data policy.

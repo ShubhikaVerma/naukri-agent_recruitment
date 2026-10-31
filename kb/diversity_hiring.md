@@ -1,0 +1,3 @@
+# Diversity Hiring Guidelines
+
+Every job posting must be written in inclusive language and must not state preferences based on gender, age, religion, caste, or marital status. Interview panels for senior roles should include at least one member from outside the hiring team and, wherever possible, a mix of genders. Shortlisting is done on skills and experience, and recruiters must record the reason for rejecting any candidate. Hiring data is reviewed every quarter to check that the funnel remains fair.

@@ -1,0 +1,100 @@
+﻿
+C:\Users\Astrophel\OneDrive - Whitefield Global School\Desktop\BI 
+Project\portfolio_projects\naukri-agent\app.py:25: LangChainDeprecationWarning: 
+RunnableWithMessageHistory is deprecated. Use LangGraph's built-in persistence instead.
+  import conversation
+System.Management.Automation.RemoteException
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+Loading weights:  26%|##6       | 27/103 [00:00<00:00, 254.28it/s]
+Loading weights: 100%|##########| 103/103 [00:00<00:00, 578.52it/s]
+C:\Users\Astrophel\OneDrive - Whitefield Global School\Desktop\BI 
+Project\portfolio_projects\naukri-agent\conversation.py:35: LangChainDeprecationWarning: The class 
+`InMemoryChatMessageHistory` was deprecated in LangChain 1.6.4 and will be removed in 2.0.0 See the 
+short-term memory documentation for recommended alternatives: 
+https://docs.langchain.com/oss/python/langchain/short-term-memory
+  _STORE[session_id] = InMemoryChatMessageHistory()
+==============================================================================
+HTTP ENDPOINTS
+==============================================================================
+  health -> HTTP 200
+GET /health: {'status': 'ok'}
+
+POST /ask - policy question
+  ask -> HTTP 200
+      answer_type=policy  sources=['background_verification']  tools=['rag_lookup']
+      events=none
+      answer: Background verification starts only after a candidate has accepted an offer in writing. The 
+candidate must submit the requested documents within five working days of the request.
+
+POST /ask - two turns in ONE session (memory over HTTP)
+  turn 1 -> HTTP 200
+      answer_type=application_status  sources=[]  tools=['check_job_application_status']
+      events=none
+      answer: Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 
+(escalation recommended).
+  turn 2 -> HTTP 200
+      answer_type=application_status  sources=[]  tools=['check_job_application_status']
+      events=none
+      answer: Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 
+(escalation recommended).
+
+POST /ask - phone number is masked before the agent sees it
+  pii -> HTTP 200
+      answer_type=application_status  sources=[]  tools=['check_job_application_status']
+      events=['pii_mask:masked_phone']
+      answer: Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 
+(escalation recommended).
+
+POST /ask - prompt injection is blocked
+  injection -> HTTP 200
+      answer_type=fallback  sources=[]  tools=[]
+      events=['prompt_injection:blocked_request']
+      answer: I can't follow instructions that try to change how I work. I can help with Naukri.com 
+hiring-policy questions and application status.
+
+POST /ask - invalid request body (empty question) is rejected by the Pydantic model
+  -> HTTP 422  detail: String should have at least 1 character
+
+POST /add-document - the knowledge base grows at runtime
+  before:
+  ask -> HTTP 200
+      answer_type=fallback  sources=[]  tools=['rag_lookup']
+      events=['output_groundedness:refused_no_supporting_context']
+      answer: I don't know based on the available policy documents or application records.
+  add-document -> HTTP 201
+      {'trace_id': 'ccf793a71244489caec1a0edc70d12d1', 'doc_id': 'demo_relocation_policy', 'title': 
+'Relocation Assistance Policy', 'chunks_fixed': 1, 'chunks_sentence': 3}
+  after:
+  ask -> HTTP 200
+      answer_type=policy  sources=['demo_relocation_policy']  tools=['rag_lookup']
+      events=none
+      answer: New hires who relocate more than 100 kilometres for the job receive a one-time relocation 
+allowance. The allowance is paid with the first salary after the joining date.
+  adding the same doc_id again -> HTTP 409  (document 'demo_relocation_policy' already exists)
+  a 1-sentence document -> HTTP 422  (document must have 2-5 sentences, found 1)
+
+==============================================================================
+WEBSOCKET /ws/chat
+==============================================================================
+  client 1 connected: {'type': 'connected', 'session_id': '871e47ef682f'}
+  client 1 turn 1 -> Application APP-0010 is 'Applied', expected salary INR 960000, escalation score 
+0.367 (no escalation needed).
+  client 1 turn 2 (memory over WebSocket) -> Application APP-0010 is 'Applied', expected salary INR 
+960000, escalation score 0.367 (no escalation needed).
+  client 1 empty message -> {'type': 'error', 'detail': 'send a question of 1-1000 characters'}
+  client 1 turn 3 -> The standard notice period for employees is sixty days, and it is stated in the 
+offer letter. During the notice period the employee remains bound by their current contract.
+[ws] client 871e47ef682f disconnected; server keeps running
+  client 1 disconnected mid-conversation (after 3 turns)
+  client 2 connected: {'type': 'connected', 'session_id': '12320fb48df0'}
+  client 2 turn 1 -> Applicant data for candidates who are not hired is retained for twelve months from 
+the date of the last application activity. Candidates can request deletion of their data at any time and 
+the request is completed within thirty days.
+[ws] client 12320fb48df0 disconnected; server keeps running
+  -> the server survived client 1's disconnect and still serves client 2
+  server-side disconnects caught (WebSocketDisconnect): 2
+  (a disconnect while a reply is still being computed is tested against a real server by ws_live_test.py)
+
+[cleanup] demo document removed and index rebuilt from the original knowledge base
+
+

@@ -1,0 +1,3 @@
+# Background Verification Process
+
+Background verification starts only after a candidate has accepted an offer in writing. It covers identity, education, employment history, and address checks carried out by an approved third-party agency. The candidate must submit the requested documents within five working days of the request. Joining is conditional on a clear report, and the results are shared only with the HR verification team.

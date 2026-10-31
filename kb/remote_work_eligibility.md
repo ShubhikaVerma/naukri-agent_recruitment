@@ -1,0 +1,3 @@
+# Remote Work Eligibility
+
+Employees are eligible for hybrid or fully remote work only after completing probation. Eligibility also depends on the role, since positions that need on-site equipment or in-person customer contact are excluded. Remote employees must have a stable internet connection and be available during the core hours of 11 AM to 4 PM IST. The arrangement is reviewed every year and can be withdrawn with thirty days of notice.

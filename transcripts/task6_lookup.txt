@@ -1,0 +1,10 @@
+﻿
+{'record_id': 'APP-0001', 'found': True, 'status': 'Applied', 'expected_salary_inr': 2050000, 
+'escalation_score': 0.117, 'recommend_escalation': False}
+{'record_id': 'APP-0002', 'found': True, 'status': 'Screening', 'expected_salary_inr': 920000, 
+'escalation_score': 0.717, 'recommend_escalation': True}
+{'record_id': 'APP-0010', 'found': True, 'status': 'Applied', 'expected_salary_inr': 960000, 
+'escalation_score': 0.367, 'recommend_escalation': False}
+{'record_id': 'APP-9999', 'found': False, 'error': 'No application found with record_id APP-9999'}
+
+

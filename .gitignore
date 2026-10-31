@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.chroma/
+chroma_db/
+.env
+.DS_Store
+.idea/
+.vscode/
+logs/requests.jsonl

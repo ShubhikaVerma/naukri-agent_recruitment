@@ -1,0 +1,3 @@
+# Exit Interview Process
+
+An exit interview is held during the last week of an employee's notice period and is conducted by HR rather than the reporting manager. The employee is asked about reasons for leaving, their experience with the team, and suggestions for improvement. Participation is voluntary, and responses are used only in anonymised form for retention analysis. Final settlement is not dependent on attending the exit interview.

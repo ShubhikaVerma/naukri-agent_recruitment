@@ -1,0 +1,94 @@
+﻿
+PART 1: crew responses, each validated against SupportResponse
+
+System.Management.Automation.RemoteException
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+Loading weights:  48%|####7     | 49/103 [00:00<00:00, 446.68it/s]
+Loading weights: 100%|##########| 103/103 [00:00<00:00, 867.48it/s]
+Q: How many days do I have to submit documents for background verification?
+{
+  "answer": "Background verification starts only after a candidate has accepted an offer in writing. The 
+candidate must submit the requested documents within five working days of the request.",
+  "answer_type": "policy",
+  "grounded": true,
+  "sources": [
+    "background_verification"
+  ],
+  "application": null,
+  "tools_used": [
+    "rag_lookup"
+  ]
+}
+  -> schema validation: PASSED
+
+Q: What is the status of APP-0002?
+{
+  "answer": "Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 
+(escalation recommended).",
+  "answer_type": "application_status",
+  "grounded": true,
+  "sources": [],
+  "application": {
+    "record_id": "APP-0002",
+    "status": "Screening",
+    "expected_salary_inr": 920000,
+    "escalation_score": 0.717,
+    "recommend_escalation": true
+  },
+  "tools_used": [
+    "check_job_application_status"
+  ]
+}
+  -> schema validation: PASSED
+
+Q: Can you check APP-0010 and tell me the notice period policy?
+{
+  "answer": "The standard notice period for employees is sixty days, and it is stated in the offer 
+letter. During the notice period the employee remains bound by their current contract. Application 
+APP-0010 is 'Applied', expected salary INR 960000, escalation score 0.367 (no escalation needed).",
+  "answer_type": "policy_and_status",
+  "grounded": true,
+  "sources": [
+    "notice_period"
+  ],
+  "application": {
+    "record_id": "APP-0010",
+    "status": "Applied",
+    "expected_salary_inr": 960000,
+    "escalation_score": 0.367,
+    "recommend_escalation": false
+  },
+  "tools_used": [
+    "rag_lookup",
+    "check_job_application_status"
+  ]
+}
+  -> schema validation: PASSED
+
+Q: What is the capital of France?
+{
+  "answer": "I don't know based on the available policy documents or application records.",
+  "answer_type": "fallback",
+  "grounded": false,
+  "sources": [],
+  "application": null,
+  "tools_used": [
+    "rag_lookup"
+  ]
+}
+  -> schema validation: PASSED
+
+PART 2: deliberately invalid payloads must be rejected
+
+  [REJECTED]  escalation_score out of range (1.7)
+              reason: Input should be less than or equal to 1
+  [REJECTED]  malformed record_id ('APP-2')
+              reason: String should match pattern '^APP-\d{4}$'
+  [REJECTED]  policy answer with no cited source
+              reason: Value error, a policy answer must cite at least one source document
+  [REJECTED]  invented source document
+              reason: Value error, sources not in the knowledge base: ['made_up_policy']
+  [REJECTED]  fallback that claims to be grounded
+              reason: Value error, a fallback answer must be ungrounded, with no sources or application
+
+
