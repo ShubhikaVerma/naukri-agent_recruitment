@@ -9,3 +9,4 @@ chroma_db/
 .idea/
 .vscode/
 logs/requests.jsonl
+   .crewai/
