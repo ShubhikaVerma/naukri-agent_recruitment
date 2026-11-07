@@ -1,7 +1,4 @@
 ﻿
-System.Management.Automation.RemoteException
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
-Loading weights: 100%|##########| 103/103 [00:00<00:00, 1304.27it/s]
 
 === kb_fixed ===
 In-scope top-1 similarity:
@@ -30,5 +27,3 @@ Lowest in-scope = 0.499 | Highest out-of-scope = 0.268
 Chosen threshold (midpoint of the gap): 0.384
 
 Saved to calibration.json
-
-

@@ -1,0 +1,37 @@
+﻿
+==============================================================================
+PART 1: the grounded-generation step, called repeatedly
+==============================================================================
+normalised key: 'how many days do i have to submit documents for background verification'
+
+call                                     ms  LLM calls  searches       cache
+1. first ask (cold)                  220.27          1         1        MISS
+2. identical question                  0.11          0         0         HIT
+3. same, different case/spacing        0.08          0         0         HIT
+4. a different question              140.14          1         1        MISS
+
+  [PASS] first ask: 1 LLM call + 1 vector search
+  [PASS] identical repeat: cache HIT, 0 LLM calls, 0 searches (0.11 ms vs 220.27 ms cold)
+  [PASS] different case/spacing/punctuation also hits (normalised key)
+  [PASS] a genuinely different question still misses
+  [PASS] the cached answer is identical to the original
+
+==============================================================================
+PART 2: end to end through the full pipeline (crew + review + budget meter)
+==============================================================================
+request                      ms   tokens  model calls   gen. calls  searches
+first (cache cold)        763.8     3576            7            1         1
+second (identical)        371.9     3309            6            0         0
+
+  tools invoked both times: ['rag_lookup']   (the crew still runs; only the redundant work is skipped)
+  [PASS] second request: 0 generation calls, 0 searches, fewer tokens (3309 vs 3576), same answer
+
+==============================================================================
+PART 3: invalidation when the knowledge base changes
+==============================================================================
+  after reset_cache(): the identical question is a cache MISS again (1 generation call)
+  [PASS] no stale answer survives a knowledge-base change
+
+==============================================================================
+ALL CACHE CHECKS PASSED
+cache entries: 1  hits: 3  misses: 5

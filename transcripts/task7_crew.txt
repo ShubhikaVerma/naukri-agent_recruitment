@@ -1,25 +1,13 @@
 ﻿
-System.Management.Automation.RemoteException
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
-Loading weights:  24%|##4       | 25/103 [00:00<00:00, 249.88it/s]
-Loading weights: 100%|##########| 103/103 [00:00<00:00, 892.26it/s]
 ==============================================================================
 Q: How many days do I have to submit documents for background verification?
-Tools invoked: [('rag_lookup', 'How many days do I have to submit documents for background 
-verification?')]
-Draft answer : Background verification starts only after a candidate has accepted an offer in writing. 
-The candidate must submit the requested documents within five working days of the request.
+Tools invoked: [('rag_lookup', 'How many days do I have to submit documents for background verification?')]
+Draft answer : Background verification starts only after a candidate has accepted an offer in writing. The candidate must submit the requested documents within five working days of the request.
 ==============================================================================
 Q: What is the status of APP-0002?
 Tools invoked: [('check_job_application_status', 'APP-0002')]
-Draft answer : Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 
-(escalation recommended).
+Draft answer : Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 (escalation recommended).
 ==============================================================================
 Q: Can you check APP-0010 and tell me the notice period policy?
-Tools invoked: [('rag_lookup', 'Can you check APP-0010 and tell me the notice period policy?'), 
-('check_job_application_status', 'APP-0010')]
-Draft answer : The standard notice period for employees is sixty days, and it is stated in the offer 
-letter. During the notice period the employee remains bound by their current contract. Application 
-APP-0010 is 'Applied', expected salary INR 960000, escalation score 0.367 (no escalation needed).
-
-
+Tools invoked: [('rag_lookup', 'Can you check APP-0010 and tell me the notice period policy?'), ('check_job_application_status', 'APP-0010')]
+Draft answer : The standard notice period for employees is sixty days, and it is stated in the offer letter. During the notice period the employee remains bound by their current contract. Application APP-0010 is 'Applied', expected salary INR 960000, escalation score 0.367 (no escalation needed).

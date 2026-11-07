@@ -1,13 +1,6 @@
-﻿
-C:\Users\Astrophel\OneDrive - Whitefield Global School\Desktop\BI 
-Project\portfolio_projects\naukri-agent\memory_demo.py:2: LangChainDeprecationWarning: 
-RunnableWithMessageHistory is deprecated. Use LangGraph's built-in persistence instead.
+﻿C:\Users\Astrophel\OneDrive - Whitefield Global School\Desktop\BI Project\portfolio_projects\naukri-agent\memory_demo.py:2: LangChainDeprecationWarning: RunnableWithMessageHistory is deprecated. Use LangGraph's built-in persistence instead.
   from conversation import chat, get_session_history
-C:\Users\Astrophel\OneDrive - Whitefield Global School\Desktop\BI 
-Project\portfolio_projects\naukri-agent\conversation.py:35: LangChainDeprecationWarning: The class 
-`InMemoryChatMessageHistory` was deprecated in LangChain 1.6.4 and will be removed in 2.0.0 See the 
-short-term memory documentation for recommended alternatives: 
-https://docs.langchain.com/oss/python/langchain/short-term-memory
+C:\Users\Astrophel\OneDrive - Whitefield Global School\Desktop\BI Project\portfolio_projects\naukri-agent\conversation.py:38: LangChainDeprecationWarning: The class `InMemoryChatMessageHistory` was deprecated in LangChain 1.6.4 and will be removed in 2.0.0 See the short-term memory documentation for recommended alternatives: https://docs.langchain.com/oss/python/langchain/short-term-memory
   _STORE[session_id] = InMemoryChatMessageHistory()
 ##############################################################################
 # TRANSCRIPT A: multi-turn conversation, state carried across turns
@@ -16,28 +9,21 @@ https://docs.langchain.com/oss/python/langchain/short-term-memory
 Turn 1  [session=session-A]
   User            : What is the status of APP-0002?
   Tools invoked   : [('check_job_application_status', 'APP-0002')]
-  Agent           : Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 
-0.717 (escalation recommended).
+  Agent           : Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 (escalation recommended).
   Messages stored : 2
 
 Turn 2  [session=session-A]
   User            : Is it recommended for escalation, and what is its expected salary?
-  Resolved to     : Is it recommended for escalation, and what is its expected salary? (application 
-APP-0002)
+  Resolved to     : Is it recommended for escalation, and what is its expected salary? (application APP-0002)
   Tools invoked   : [('check_job_application_status', 'APP-0002')]
-  Agent           : Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 
-0.717 (escalation recommended).
+  Agent           : Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 (escalation recommended).
   Messages stored : 4
 
-System.Management.Automation.RemoteException
-Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
-Loading weights:  46%|####5     | 47/103 [00:00<00:00, 463.75it/s]
-Loading weights: 100%|##########| 103/103 [00:00<00:00, 733.43it/s]
+
 Turn 3  [session=session-A]
   User            : What is the standard notice period when I join?
   Tools invoked   : [('rag_lookup', 'What is the standard notice period when I join?')]
-  Agent           : The standard notice period for employees is sixty days, and it is stated in the offer 
-letter. During the notice period the employee remains bound by their current contract.
+  Agent           : The standard notice period for employees is sixty days, and it is stated in the offer letter. During the notice period the employee remains bound by their current contract.
   Messages stored : 6
 
 Turn 4  [session=session-A]
@@ -65,5 +51,3 @@ Turn 2  [session=session-B]
 Isolation check (sessions do not leak into each other):
   session-A holds 8 messages
   session-B holds 4 messages
-
-

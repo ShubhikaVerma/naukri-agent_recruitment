@@ -4,8 +4,12 @@ Retrieval finds the relevant chunks; generation then works ONLY from the parent 
 of those chunks (parent-document expansion), so a fixed-size chunk that starts or ends
 mid-sentence can never produce a broken or truncated answer. Below the calibrated
 similarity threshold the agent refuses with an "I don't know" fallback."""
+import copy
 import json
 import os
+import re
+import threading
+from collections import OrderedDict
 from pathlib import Path
 
 import numpy as np
@@ -16,12 +20,16 @@ from rag_index import (
     COLLECTION_FIXED, COLLECTION_SENTENCE,
 )
 from queries import DEMO_QUERIES, OUT_OF_SCOPE_DEMO
+from runtime_guard import record_llm_call
 
 MOCK_LLM = os.environ.get("MOCK_LLM", "true").lower() == "true"
 FALLBACK = "I don't know based on the available policy documents."
-LLM_CALLS = {"count": 0}          # used later to prove cache hits (Task 16)
+LLM_CALLS = {"count": 0}          # generation calls made (a cache hit must NOT increase this)
+SEARCH_CALLS = {"count": 0}       # vector searches made   (a cache hit must NOT increase this)
 CALIBRATION_FILE = Path(__file__).parent / "calibration.json"
-ANSWER_SENTENCES = 2              # how many sentences the mock LLM quotes
+ANSWER_SENTENCES = 2              # the mock LLM quotes at least this many sentences...
+MAX_ANSWER_SENTENCES = 3          # ...and at most this many (one per clause of a compound question)
+CLAUSE_SPLIT_RE = re.compile(r"\s+and\s+|;\s*|\?\s+", re.IGNORECASE)
 
 _doc_sentences = {}
 
@@ -33,9 +41,28 @@ def doc_sentences(doc_id: str) -> list:
             _doc_sentences[d["doc_id"]] = sentence_chunks(d["text"])
     return _doc_sentences[doc_id]
 
+
+# ------------------------------------------------------------------ Task 16: response cache
+# In-memory, keyed by the NORMALISED query text, around the grounded-generation step only
+# (retrieval + generation for knowledge-base questions). Application records are never cached,
+# and the keys are the already-masked question text, so no phone number is stored.
+CACHE_MAX_ENTRIES = 256
+CACHE_STATS = {"hits": 0, "misses": 0}
+_answer_cache = OrderedDict()                     # (collection, normalised query, k) -> result
+_cache_lock = threading.Lock()
+
+
+def normalize_query(query: str) -> str:
+    """Lower-case, drop punctuation (keeping hyphens, e.g. APP-0002), collapse whitespace."""
+    return re.sub(r"\s+", " ", re.sub(r"[^\w\s-]", " ", query.lower())).strip()
+
+
 def reset_cache() -> None:
-    """Forget cached document sentences (called after a document is added at runtime)."""
+    """Forget cached document sentences AND cached answers. Called whenever the knowledge base
+    changes (POST /add-document), so no stale answer can outlive the documents it came from."""
     _doc_sentences.clear()
+    with _cache_lock:
+        _answer_cache.clear()
 
 
 def load_threshold(collection_name: str) -> float:
@@ -46,28 +73,53 @@ def load_threshold(collection_name: str) -> float:
     return data[collection_name]["threshold"]
 
 
-def mock_llm_generate(query: str, doc_ids: list) -> tuple:
+def split_clauses(query: str) -> list:
+    """Split a compound question ("how long is X and when is Y reviewed?") into its parts."""
+    parts = [p.strip(" ?.,") for p in CLAUSE_SPLIT_RE.split(query)]
+    parts = [p for p in parts if len(p.split()) >= 2]
+    return parts if len(parts) > 1 else [query]
+
+
+def mock_llm_generate(query: str, doc_ids: list, floor: float = 0.0) -> tuple:
     """Deterministic stand-in for an LLM. Extractive, so it can only repeat what the
-    retrieved documents say: it returns the sentences most similar to the query.
-    Returns (answer_text, source_doc_ids_of_the_sentences_used)."""
+    retrieved documents say. For a compound question it quotes the best sentence for EACH
+    clause (if that sentence is similar enough, >= floor); it then tops up to
+    ANSWER_SENTENCES using the whole question. Returns (answer_text, source_doc_ids_used)."""
     if not MOCK_LLM:
         raise NotImplementedError("Wire a real LLM here behind MOCK_LLM=false (optional).")
     LLM_CALLS["count"] += 1
 
-    candidates = []                                   # (doc_id, position, sentence)
+    candidates = []                                   # (doc_id, position, sentence), in reading order
     for doc_id in doc_ids:
         for pos, sent in enumerate(doc_sentences(doc_id)):
             candidates.append((doc_id, pos, sent))
+    vectors = np.array(embed([c[2] for c in candidates]))
 
-    scores = np.array(embed([c[2] for c in candidates])) @ np.array(embed([query])[0])
-    top = sorted(np.argsort(-scores)[:ANSWER_SENTENCES])        # keep reading order
-    chosen = [candidates[i] for i in top]
-    answer = " ".join(c[2] for c in chosen)
-    return answer, sorted({c[0] for c in chosen})
+    chosen = []
+    clauses = split_clauses(query)
+    if len(clauses) > 1:
+        for clause in clauses:
+            scores = vectors @ np.array(embed([clause])[0])
+            best = int(np.argmax(scores))
+            if scores[best] >= floor and best not in chosen:
+                chosen.append(best)
+
+    whole = vectors @ np.array(embed([query])[0])
+    for i in np.argsort(-whole):
+        if len(chosen) >= ANSWER_SENTENCES:
+            break
+        if int(i) not in chosen:
+            chosen.append(int(i))
+
+    picked = [candidates[i] for i in sorted(chosen[:MAX_ANSWER_SENTENCES])]
+    answer = " ".join(c[2] for c in picked)
+    record_llm_call(query + " ".join(c[2] for c in candidates), answer)   # counts against the request budget
+    return answer, sorted({c[0] for c in picked})
 
 
 def grounded_answer(query: str, collection, collection_name: str, k: int = 3) -> dict:
     threshold = load_threshold(collection_name)
+    SEARCH_CALLS["count"] += 1
     hits = search(collection, query, k=k)
     top1 = hits[0]["similarity"]
     if top1 < threshold:
@@ -78,9 +130,27 @@ def grounded_answer(query: str, collection, collection_name: str, k: int = 3) ->
     for h in hits:
         if h["similarity"] >= threshold and h["doc_id"] not in doc_ids:
             doc_ids.append(h["doc_id"])
-    answer, sources = mock_llm_generate(query, doc_ids)
+    answer, sources = mock_llm_generate(query, doc_ids, floor=threshold)
     return {"query": query, "answer": answer, "grounded": True,
             "top1_similarity": top1, "threshold": threshold, "sources": sources}
+
+
+def cached_grounded_answer(query: str, collection, collection_name: str, k: int = 3) -> dict:
+    """grounded_answer() behind the response cache. A hit skips the vector search AND the
+    generation call; the result carries "cache": "hit" or "miss"."""
+    key = (collection_name, normalize_query(query), k)
+    with _cache_lock:
+        if key in _answer_cache:
+            _answer_cache.move_to_end(key)
+            CACHE_STATS["hits"] += 1
+            return {**copy.deepcopy(_answer_cache[key]), "cache": "hit"}
+    result = grounded_answer(query, collection, collection_name, k)            # miss: do the real work
+    with _cache_lock:
+        CACHE_STATS["misses"] += 1
+        _answer_cache[key] = copy.deepcopy(result)
+        while len(_answer_cache) > CACHE_MAX_ENTRIES:
+            _answer_cache.popitem(last=False)                                   # evict least recently used
+    return {**result, "cache": "miss"}
 
 
 def show(result: dict):

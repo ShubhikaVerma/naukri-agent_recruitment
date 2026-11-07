@@ -1,4 +1,4 @@
-"""Task 8 (+ Task 10/11 integration): session memory wrapped around the guarded crew.
+"""Task 8 (+ Tasks 10/11/14/15 integration): session memory wrapped around the full pipeline.
 
 LangChain's RunnableWithMessageHistory + InMemoryChatMessageHistory keep one message
 history per session_id. The history is used in two real ways:
@@ -16,8 +16,9 @@ from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.runnables import RunnableLambda
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
-from guardrails import (INJECTION_REFUSAL, detect_injection, guarded_ask, injection_event,
+from guardrails import (INJECTION_REFUSAL, detect_injection, injection_event,
                         mask_phone, pii_event, refusal)
+from pipeline import process_question
 from schemas import SupportResponse
 
 RECORD_ID_RE = re.compile(r"\bAPP-\d{4}\b", re.IGNORECASE)
@@ -27,7 +28,9 @@ RECALL_RE = re.compile(
     r"(what did i (ask|say)|(my|the) (first|previous|last|earlier) (question|message))", re.IGNORECASE)
 
 _STORE = {}                                  # session_id -> InMemoryChatMessageHistory
-LAST_RUN = {"tool_calls": [], "resolved_question": "", "events": [], "response": None}
+NO_USAGE = {"total_tokens": 0, "prompt_tokens": 0, "completion_tokens": 0, "model_calls": 0, "cost_usd": 0.0}
+LAST_RUN = {"tool_calls": [], "resolved_question": "", "events": [], "response": None,
+            "review": {"status": "skipped"}, "usage": NO_USAGE}
 
 
 def get_session_history(session_id: str) -> InMemoryChatMessageHistory:
@@ -56,7 +59,8 @@ def _conversation_reply(text: str) -> dict:
 def _turn(inputs: dict) -> str:
     question = inputs["input"]
     history = inputs["history"]                       # this session's messages only
-    LAST_RUN.update(tool_calls=[], resolved_question=question, events=[], response=None)
+    LAST_RUN.update(tool_calls=[], resolved_question=question, events=[], response=None,
+                    review={"status": "skipped"}, usage=NO_USAGE)
 
     # 2. Recall question: answered purely from the stored history.
     if RECALL_RE.search(question):
@@ -78,8 +82,9 @@ def _turn(inputs: dict) -> str:
         question = "{} (application {})".format(question, rid)
         LAST_RUN["resolved_question"] = question
 
-    out = guarded_ask(question)                       # crew + input/output guardrails
-    LAST_RUN.update(tool_calls=out["tool_calls"], events=out["events"], response=out["response"])
+    out = process_question(question)                 # budget + guardrails + crew + review stage
+    LAST_RUN.update(tool_calls=out["tool_calls"], events=out["events"], response=out["response"],
+                    review=out["review"], usage=out["usage"])
     return out["answer"]
 
 
@@ -100,11 +105,13 @@ def chat(session_id: str, question: str) -> dict:
         return {"session_id": session_id, "answer": INJECTION_REFUSAL,
                 "response": refusal(INJECTION_REFUSAL).model_dump(), "events": [injection_event(hits)],
                 "masked_question": question, "resolved_question": question,
-                "tool_calls": [], "history_length": history_len()}
+                "tool_calls": [], "history_length": history_len(),
+                "review": {"status": "skipped"}, "usage": NO_USAGE}
 
     masked, n = mask_phone(question)                  # the history only ever stores masked text
     answer = _chain.invoke({"input": masked}, config={"configurable": {"session_id": session_id}})
     return {"session_id": session_id, "answer": answer, "response": LAST_RUN["response"],
             "events": ([pii_event(n)] if n else []) + LAST_RUN["events"],
             "masked_question": masked, "resolved_question": LAST_RUN["resolved_question"],
-            "tool_calls": list(LAST_RUN["tool_calls"]), "history_length": history_len()}
+            "tool_calls": list(LAST_RUN["tool_calls"]), "history_length": history_len(),
+            "review": LAST_RUN["review"], "usage": LAST_RUN["usage"]}

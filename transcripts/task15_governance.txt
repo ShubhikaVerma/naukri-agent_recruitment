@@ -1,0 +1,74 @@
+﻿==============================================================================
+APPLICATION LAYER 1/2: RISK CLASSIFICATION
+==============================================================================
+  Low    summarization, transcription
+  Medium code generation, customer-support tickets
+  High   medical data, hiring decisions, financial data   <-- this system
+
+HIGH. The assistant reads individual job-application records, including expected salary (financial data), and produces an escalation recommendation that can influence how a candidate's application is handled, so it sits next to hiring decisions even though it is read-only and never decides anything itself. Answering policy questions alone would be Medium (customer support), but errors or leaks here affect real people's employment and pay, so the stricter controls apply: least autonomy, phone-number masking, groundedness refusal, an independent review team, a per-request token budget, and structured audit logging. This project uses fabricated data only.
+
+==============================================================================
+APPLICATION LAYER 2/2: LEAST AUTONOMY
+==============================================================================
+Permission table (ALLOWED_TOOL_ROLES):
+  rag_lookup                       -> ['Retrieval Agent']
+  check_job_application_status     -> ['Lookup Agent']
+
+Wiring of the real crew:
+  Retrieval Agent      tools: ['rag_lookup']
+  Lookup Agent         tools: ['check_job_application_status']
+  Response Composer    tools: none
+
+Attempts to break the rule:
+  [BLOCKED] A. wire the Lookup Agent's tool to the Response Composer
+            LeastAutonomyViolation: tool 'check_job_application_status' is bound to 'Lookup Agent', so it cannot be given to 'Response Composer'
+  [BLOCKED] B. wire the lookup tool to the Retrieval Agent
+            LeastAutonomyViolation: 'Retrieval Agent' is not permitted to use 'check_job_application_status' (allowed: ['Lookup Agent'])
+  [BLOCKED] C. skip make_agent() and call the lookup tool as the Composer (call-time guard)
+            LeastAutonomyViolation: 'Response Composer' is not permitted to call 'check_job_application_status' (allowed: ['Lookup Agent'])
+  [BLOCKED] D. call the policy-search tool as the Lookup Agent (call-time guard)
+            LeastAutonomyViolation: 'Lookup Agent' is not permitted to call 'rag_lookup' (allowed: ['Retrieval Agent'])
+
+Error executing listener call_llm_and_parse: mid-flight budget check failed: 1713 tokens vs a budget of 1500 (stopped after 3 model call(s))
+C:\Users\Astrophel\OneDrive - Whitefield Global School\Desktop\BI Project\portfolio_projects\naukri-agent\app.py:25: LangChainDeprecationWarning: RunnableWithMessageHistory is deprecated. Use LangGraph's built-in persistence instead.
+  import conversation
+C:\Users\Astrophel\OneDrive - Whitefield Global School\Desktop\BI Project\portfolio_projects\naukri-agent\conversation.py:38: LangChainDeprecationWarning: The class `InMemoryChatMessageHistory` was deprecated in LangChain 1.6.4 and will be removed in 2.0.0 See the short-term memory documentation for recommended alternatives: https://docs.langchain.com/oss/python/langchain/short-term-memory
+  _STORE[session_id] = InMemoryChatMessageHistory()
+
+Legitimate run, who called what: [('check_job_application_status', 'Lookup Agent'), ('rag_lookup', 'Retrieval Agent')]
+  [PASS] only the Lookup Agent called check_job_application_status
+
+How the guard works:
+Each tool instance is bound to one agent role, and ALLOWED_TOOL_ROLES says which roles may use which tool: only the Lookup Agent may use check_job_application_status, and only the Retrieval Agent may use rag_lookup. The guard has two layers. At wiring time make_agent() refuses to attach a tool to any agent whose role does not match the tool's binding or is not on its allow-list, so wiring the lookup tool to the Response Composer raises LeastAutonomyViolation before the crew exists. At call time the tool checks its own bound role again before running, so even code that builds an Agent directly and skips make_agent() is stopped when it tries to call the tool. The Composer has no tools at all: it can only combine what the other agents report.
+
+==============================================================================
+RUNTIME LAYER: PER-REQUEST BUDGET
+==============================================================================
+Budget: 8000 tokens per request  (= $0.0160 at $0.002/1k tokens)
+
+Measured usage of normal requests (crew + review team, all model calls):
+   tokens  calls  cost USD   question
+     3576      7   0.00715   How many days do I have to submit documents for back
+     2950      6   0.00590   What is the status of APP-0002?
+     4203      7   0.00841   Can you check APP-0010 and tell me the notice period
+     2352      4   0.00470   What is the capital of France?
+  [PASS] every normal request fits the budget (max 4203 of 8000)
+
+Case 1: a deliberately OVERSIZED request (4,000 characters) is rejected up front
+  question length : 4073 characters
+  estimate        : 9614 tokens vs budget 8000
+  rejected        : pre-flight budget check failed: 9614 tokens vs a budget of 8000 (estimated from a 4073-character question; no model was called)
+  tools invoked   : 0   (no model was called)
+  [PASS] rejected before any model call
+
+Case 2: the mid-flight backstop. Pre-flight is switched off and the budget set to 1,500 tokens,
+so a normal request starts but must be stopped the moment it passes the cap
+  stopped         : mid-flight budget check failed: 1713 tokens vs a budget of 1500 (stopped after 3 model call(s))
+  [PASS] aborted mid-flight instead of finishing over budget
+
+Case 3: over HTTP the same rejection becomes 413 (budget temporarily set to 1,500 tokens)
+  POST /ask -> HTTP 413  {"detail": "request rejected by the per-request budget: pre-flight budget check failed: 3548 tokens vs a budget of 1500 (estimated from a 31-character
+  [PASS] HTTP 413 returned
+
+==============================================================================
+ALL GOVERNANCE CHECKS PASSED

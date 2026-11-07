@@ -1,5 +1,4 @@
-﻿
-Formula: score = 0.5 * flagged + 0.5 * (days_since_created / 30)
+﻿Formula: score = 0.5 * flagged + 0.5 * (days_since_created / 30)
 days_since_created percentiles: p50=13  p80=22  p90=27
 score percentiles:              p50=0.291  p80=0.477  p90=0.617  max=0.983
 
@@ -17,5 +16,3 @@ Records recommended for escalation at 0.6:
   APP-0013  score=0.633  flagged=True  days=8  status=Offered
   APP-0023  score=0.617  flagged=True  days=7  status=Rejected
   APP-0027  score=0.617  flagged=True  days=7  status=Screening
-
-

@@ -1,0 +1,66 @@
+﻿
+==============================================================================
+CASE 1: genuine crew draft -> must be APPROVED UNCHANGED
+==============================================================================
+Draft answer   : Background verification starts only after a candidate has accepted an offer in writing. The candidate must submit the requested documents within five working days of the request.
+Speakers       : ['user', 'Policy_Compliance_Reviewer', 'Final_Editor']   (stop reason: Maximum number of turns 2 reached.)
+Reviewer report: VERDICT: CLEAN. Every sentence is supported by the retrieved context.
+Structured verdict (validated VerdictModel):
+{
+  "approved": true,
+  "final_answer": "Background verification starts only after a candidate has accepted an offer in writing. The candidate must submit the requested documents within five working days of the request.",
+  "reason": "Reviewer found every sentence supported; draft approved unchanged."
+}
+Final answer is IDENTICAL to the draft
+[PASS] expected approved=True
+
+==============================================================================
+CASE 2: draft with a deliberately injected UNGROUNDED claim -> must be REVISED
+==============================================================================
+Draft answer   : Background verification starts only after a candidate has accepted an offer in writing. The candidate must submit the requested documents within five working days of the request. Late submissions are accepted for a fee of Rs 500 per day.
+Speakers       : ['user', 'Policy_Compliance_Reviewer', 'Final_Editor']   (stop reason: Maximum number of turns 2 reached.)
+Reviewer report: VERDICT: ISSUES | - UNSUPPORTED: Late submissions are accepted for a fee of Rs 500 per day.
+Structured verdict (validated VerdictModel):
+{
+  "approved": false,
+  "final_answer": "Background verification starts only after a candidate has accepted an offer in writing. The candidate must submit the requested documents within five working days of the request.",
+  "reason": "Removed 1 unsupported sentence(s): Late submissions are accepted for a fee of Rs 500 per day."
+}
+Final answer is DIFFERENT from the draft
+[PASS] expected approved=False
+
+==============================================================================
+CASE 3: genuine status draft -> must be APPROVED UNCHANGED
+==============================================================================
+Draft answer   : Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 (escalation recommended).
+Speakers       : ['user', 'Policy_Compliance_Reviewer', 'Final_Editor']   (stop reason: Maximum number of turns 2 reached.)
+Reviewer report: VERDICT: CLEAN. Every sentence is supported by the retrieved context.
+Structured verdict (validated VerdictModel):
+{
+  "approved": true,
+  "final_answer": "Application APP-0002 is 'Screening', expected salary INR 920000, escalation score 0.717 (escalation recommended).",
+  "reason": "Reviewer found every sentence supported; draft approved unchanged."
+}
+Final answer is IDENTICAL to the draft
+[PASS] expected approved=True
+
+==============================================================================
+CASE 4: status draft whose salary contradicts the record -> must be REVISED
+==============================================================================
+Draft answer   : Application APP-0002 is 'Screening', expected salary INR 1500000, escalation score 0.717 (escalation recommended).
+Speakers       : ['user', 'Policy_Compliance_Reviewer', 'Final_Editor']   (stop reason: Maximum number of turns 2 reached.)
+Reviewer report: VERDICT: ISSUES | - UNSUPPORTED: Application APP-0002 is 'Screening', expected salary INR 1500000, escalation score 0.717 (escalation recommended).
+Structured verdict (validated VerdictModel):
+{
+  "approved": false,
+  "final_answer": "I can't verify that answer against the policy documents and application records, so I won't provide it.",
+  "reason": "Removed 1 unsupported sentence(s): Application APP-0002 is 'Screening', expected salary INR 1500000, escalation score 0.717 (escalation recommended)."
+}
+Final answer is DIFFERENT from the draft
+[PASS] expected approved=False
+
+==============================================================================
+bounded at 2 turns: each case had exactly the speakers Policy_Compliance_Reviewer and Final_Editor -> PASS
+revised answer keeps the supported sentences verbatim -> PASS
+
+ALL CASES PASSED

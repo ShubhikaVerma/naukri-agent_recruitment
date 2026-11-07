@@ -1,0 +1,15 @@
+﻿Records: 48  (seed=42)
+Count per category:
+  Software Engineer 12
+  Data Analyst      11
+  Product Manager   10
+  HR Executive      5
+  Sales Associate   10
+Count per status:
+  Applied             17
+  Screening           14
+  Interview Scheduled 5
+  Offered             7
+  Rejected            5
+flagged_priority_review=True: 16.67%
+Sample: {'record_id': 'APP-0001', 'category': 'Product Manager', 'status': 'Applied', 'expected_salary_inr': 2050000, 'days_since_created': 7, 'flagged_priority_review': False, 'contact_phone': '+91-6726600539'}

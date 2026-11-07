@@ -1,0 +1,14 @@
+﻿12 documents, all required topics covered
+
+applicant_data_retention       4 sentences | Applicant Data Retention Policy
+background_verification        4 sentences | Background Verification Process
+diversity_hiring               4 sentences | Diversity Hiring Guidelines
+exit_interview                 4 sentences | Exit Interview Process
+internal_transfer              4 sentences | Internal Transfer Eligibility
+interview_scheduling           4 sentences | Interview Scheduling Process
+job_application_eligibility    4 sentences | Job Application Eligibility Criteria
+notice_period                  4 sentences | Notice Period Policy
+offer_negotiation              4 sentences | Offer Negotiation Policy
+probation_period               4 sentences | Probation Period Policy
+referral_bonus                 4 sentences | Referral Bonus Policy
+remote_work_eligibility        4 sentences | Remote Work Eligibility

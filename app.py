@@ -28,6 +28,7 @@ import guardrails
 from knowledge_base import save_document
 from logging_utils import new_trace_id, safe_text, write_log
 from rag_index import add_document_to_index, embed
+from runtime_guard import BudgetExceeded
 from schemas import SupportResponse
 
 _crew_lock = threading.Lock()
@@ -125,6 +126,7 @@ def log_fields(out: dict, question: str) -> dict:
             "answer_type": out["response"]["answer_type"], "grounded": out["response"]["grounded"],
             "tools_invoked": [c["tool"] for c in out["tool_calls"]],
             "guardrail_events": [e["guardrail"] + ":" + e["action"] for e in out["events"]],
+            "review": out["review"]["status"], "tokens_used": out["usage"]["total_tokens"],
             "timing_ms": out["timing_ms"]}
 
 
@@ -147,6 +149,9 @@ def ask(req: AskRequest, request: Request):
     request.state.log.update(session_id=session_id, question=safe_text(req.question))
     try:
         out = answer_question(session_id, req.question)
+    except BudgetExceeded as exc:
+        request.state.log["error"] = "BudgetExceeded"
+        raise HTTPException(status_code=413, detail="request rejected by the per-request budget: {}".format(exc))
     except ValidationError as exc:
         request.state.log["error"] = "ResponseValidationError"
         raise HTTPException(status_code=502, detail="the agent produced a response that failed "
@@ -211,6 +216,9 @@ async def ws_chat(websocket: WebSocket, session_id: Optional[str] = None):
             except WebSocketDisconnect:
                 fields["status"] = "client_disconnected"
                 raise
+            except BudgetExceeded as exc:
+                fields.update(status="rejected_budget", error="BudgetExceeded")
+                await websocket.send_json({"type": "error", "detail": "request rejected by the per-request budget: {}".format(exc)})
             except Exception as exc:                  # one bad turn must not kill the connection or server
                 fields.update(status="error", error=type(exc).__name__)
                 try:

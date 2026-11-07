@@ -5,10 +5,11 @@ import json
 from pydantic import BaseModel, Field
 from crewai.tools import BaseTool
 
+from governance import check_call
 from lookup_tool import check_job_application_status
 
 RAG_COLLECTION = "kb_fixed"      # chunking strategy recommended in Task 5
-TOOL_CALLS = []                  # [{"tool": ..., "input": ...}], cleared per request by the crew runner
+TOOL_CALLS = []                  # [{"tool": ..., "agent": ..., "input": ...}], cleared per request by the crew runner
 
 
 class RagInput(BaseModel):
@@ -35,11 +36,13 @@ class RagTool(BaseTool):
     description: str = ("Search the Naukri.com hiring-policy knowledge base and return a grounded "
                         "answer with its source documents, or grounded=false if nothing relevant.")
     args_schema: type[BaseModel] = RagInput
+    bound_role: str = ""                          # the one agent this instance belongs to
 
     def _run(self, query: str) -> str:
-        from grounded import grounded_answer
-        TOOL_CALLS.append({"tool": self.name, "input": query})
-        result = grounded_answer(query, _get_collection(), RAG_COLLECTION)
+        from grounded import cached_grounded_answer
+        check_call(self.name, self.bound_role)    # least autonomy, enforced at call time
+        TOOL_CALLS.append({"tool": self.name, "agent": self.bound_role, "input": query})
+        result = cached_grounded_answer(query, _get_collection(), RAG_COLLECTION)   # Task 16: response cache
         return json.dumps({"answer": result["answer"], "grounded": result["grounded"],
                            "sources": result["sources"]})
 
@@ -49,7 +52,9 @@ class StatusTool(BaseTool):
     description: str = ("Look up one job application by record_id and return its status, expected "
                         "salary in INR, and escalation score.")
     args_schema: type[BaseModel] = StatusInput
+    bound_role: str = ""                          # the one agent this instance belongs to
 
     def _run(self, record_id: str) -> str:
-        TOOL_CALLS.append({"tool": self.name, "input": record_id})
+        check_call(self.name, self.bound_role)    # least autonomy, enforced at call time
+        TOOL_CALLS.append({"tool": self.name, "agent": self.bound_role, "input": record_id})
         return json.dumps(check_job_application_status(record_id))
